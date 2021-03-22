@@ -29,6 +29,19 @@ kp1, des1 = orb.detectAndCompute(ImgQ,None)
 UserForms_Path = Imgs + "/UserForms"
 MyPicList = os.listdir(UserForms_Path)
 
+#### 4. Match to User Forms
+for i,y in enumerate(MyPicList):
+    img = cv2.imread(UserForms_Path + "/"+y)
+    #img = cv2.resize(img, (w//3,h//3)) 
+    # cv2.imshow(y,img)
+    kp2, des2 = orb.detectAndCompute(img,None)
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING)
+    matches = bf.match(des2,des1)
+    matches.sort(key = lambda x: x.distance)
+    good = matches[:int(len(matches)*(percentage/100))]
+    imgMatch = cv2.drawMatches(img,kp2,ImgQ,kp1,good,None,flags=2)
+    imgMatch = cv2.resize(imgMatch, (w//3,h//3)) 
+    cv2.imshow(y,imgMatch)
 
 #### 3. Reading in Query Image
 #cv2.imshow("KeyPointsQuery",impKp1)         
